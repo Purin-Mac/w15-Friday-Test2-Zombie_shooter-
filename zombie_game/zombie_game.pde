@@ -210,7 +210,7 @@ public class Bullet {
 
 public class Zombie {
   float positionX, positionY, size, speed, zeta;
-  int health = 3;
+  int health = 3, delay = -1;
   Zombie() { //default constructor
     positionX = width/2;
     positionY = height/2;
@@ -240,21 +240,32 @@ public class Zombie {
     //draw zombie and arm
   }
   public void move(float x, float y) {
-    float targetX = x;
-    float targetY = y;
-    float distanceX = targetX-positionX; //find distance
-    float distanceY = targetY-positionY;
-    positionX += distanceX*speed;   //update position form distance and speed
-    positionY += distanceY*speed;
-    zeta = atan(distanceY/distanceX); //update new angle
-    if (targetX<positionX && targetY>positionY){
-      zeta += PI;
+    if (delay == -1){
+      float targetX = x;
+      float targetY = y;
+      float distanceX = targetX-positionX; //find distance
+      float distanceY = targetY-positionY;
+      positionX += distanceX*speed;   //update position form distance and speed
+      positionY += distanceY*speed;
+      zeta = atan(distanceY/distanceX); //update new angle
+      if (targetX<positionX && targetY>positionY){
+        zeta += PI;
+      }
+      else if (targetX<positionX && targetY < positionY){
+        zeta -= PI;
+      }
     }
-    else if (targetX<positionX && targetY < positionY){
-      zeta -= PI;
+    else {
+      delay += 1;
+      if (delay == 200){
+        delay = -1;
+        size = size * 5/6;
+        if (health == 1){
+          size = size * 5/6;
+        }
+        health = 3;
+      }
     }
-
-
   }
 
   public void overlap(Zombie obj){
@@ -288,6 +299,7 @@ public class Zombie {
       float dis = dist(bullet[i].getX(), bullet[i].getY(), positionX, positionY); //distance between head of bullet and center of each zombie
       if (dis < size/2){ //if distance  not over radius  means bullet hit zombie
         if (i < zombie.length-1){
+          delay = 0;
           health -= 1;
           size = size * 1.2;
           if (health == 0){
@@ -306,6 +318,7 @@ public class Zombie {
           }
         }
         else{
+          delay = 0;
           health -= 1;
           size = size * 1.2;
           if (health == 0){
