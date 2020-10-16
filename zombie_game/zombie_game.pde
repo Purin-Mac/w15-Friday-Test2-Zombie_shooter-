@@ -210,6 +210,7 @@ public class Bullet {
 
 public class Zombie {
   float positionX, positionY, size, speed, zeta;
+  int health = 3;
   Zombie() { //default constructor
     positionX = width/2;
     positionY = height/2;
@@ -287,9 +288,13 @@ public class Zombie {
       float dis = dist(bullet[i].getX(), bullet[i].getY(), positionX, positionY); //distance between head of bullet and center of each zombie
       if (dis < size/2){ //if distance  not over radius  means bullet hit zombie
         if (i < zombie.length-1){
-          arraycopy(zombie, zombieNumber+1, zombie, zombieNumber, zombie.length-(zombieNumber+1));  //move i object to most right array
-          zombie =(Zombie[]) shorten(zombie);       //remove most right object
-          zombieCount-=1;
+          health -= 1;
+          size = size * 1.2;
+          if (health == 0){
+            arraycopy(zombie, zombieNumber+1, zombie, zombieNumber, zombie.length-(zombieNumber+1));  //move i object to most right array
+            zombie =(Zombie[]) shorten(zombie);       //remove most right object
+            zombieCount-=1;
+          }
           if (i < bullet.length-1){
             arraycopy(bullet, i+1, bullet, i, shooter.getBullet()-(i+1));
             bullet =(Bullet[]) shorten(bullet);
@@ -301,8 +306,12 @@ public class Zombie {
           }
         }
         else{
-          zombie =(Zombie[]) shorten(zombie);
-          zombieCount-=1;
+          health -= 1;
+          size = size * 1.2;
+          if (health == 0){
+            zombie =(Zombie[]) shorten(zombie);
+            zombieCount-=1;
+          }
           if (i < bullet.length-1){
             arraycopy(bullet, i+1, bullet, i, shooter.getBullet()-(i+1));
             bullet =(Bullet[]) shorten(bullet);
